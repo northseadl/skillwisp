@@ -1,0 +1,40 @@
+{
+    "name": "@skillwisp/monorepo",
+    "version": "0.1.0",
+    "private": true,
+    "description": "🌟 轻量级 AI Agent 技能分发平台 - 让 AI 助手瞬间获得专业能力",
+    "keywords": [
+        "ai",
+        "agent",
+        "skills",
+        "claude",
+        "gemini",
+        "cursor",
+        "copilot",
+        "llm",
+        "prompt"
+    ],
+    "homepage": "https://skillwisp.dev",
+    "repository": {
+        "type": "git",
+        "url": "https://gitcode.com/norix77/skillwisp"
+    },
+    "license": "MIT",
+    "author": "SkillWisp Team",
+    "workspaces": [
+        "cli",
+        "website"
+    ],
+    "scripts": {
+        "dev": "pnpm --filter @skillwisp/cli dev",
+        "build": "pnpm --filter @skillwisp/cli build",
+        "test": "pnpm --filter @skillwisp/cli test"
+    },
+    "devDependencies": {
+        "typescript": "^5.3.0"
+    },
+    "engines": {
+        "node": ">=18.0.0",
+        "pnpm": ">=8.0.0"
+    }
+}
