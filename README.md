@@ -136,7 +136,12 @@ skillwisp/
 
 ## CLI 源码
 
-CLI 工具源码：[skillwisp-cli](https://gitcode.com/norix77/skillwisp-cli)
+CLI 工具源码：[skillwisp-cli](https://github.com/northseadl/skillwisp-cli)
+
+## 镜像
+
+- **GitHub**: [northseadl/skillwisp](https://github.com/northseadl/skillwisp)
+- **GitCode**: [norix77/skillwisp](https://gitcode.com/norix77/skillwisp)
 
 ## License
 
