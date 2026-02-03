@@ -2,7 +2,7 @@
 
 为 Claude Code、Cursor、Gemini 等 AI 编程助手安装 Skills 的命令行工具。
 
-这里是 SkillWisp 的资源仓库，收录了 [Anthropic](https://github.com/anthropics/skills)、[Vercel](https://github.com/vercel-labs/agent-skills)、[OpenAI](https://github.com/openai/skills) 官方及社区的 74 个 Skills。你也可以直接从下方索引手动下载。
+这里是 SkillWisp 的资源仓库，收录了 [Anthropic](https://github.com/anthropics/skills)、[Vercel](https://github.com/vercel-labs/agent-skills)、[OpenAI](https://github.com/openai/skills)、[Obsidian](https://github.com/kepano/obsidian-skills) 等官方及社区的 74 个 Skills。你也可以直接从下方索引手动下载。
 
 [![npm version](https://img.shields.io/npm/v/skillwisp.svg)](https://www.npmjs.com/package/skillwisp)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
@@ -40,28 +40,49 @@ skillwisp info @anthropic/pdf    # 查看详情
 
 **[查看全部 74 个 Skills →](docs/skills.md)**
 
-### Anthropic Official
+### Anthropic
 
 | Skill | 描述 | 安装 |
 |-------|------|------|
-| [@anthropic/pdf](https://github.com/anthropics/skills/tree/main/skills/@anthropic/pdf) | PDF 处理 | `skillwisp install @anthropic/pdf` |
-| [@anthropic/docx](https://github.com/anthropics/skills/tree/main/skills/@anthropic/docx) | Word 文档 | `skillwisp install @anthropic/docx` |
-| [@anthropic/xlsx](https://github.com/anthropics/skills/tree/main/skills/@anthropic/xlsx) | Excel | `skillwisp install @anthropic/xlsx` |
-| [@anthropic/mcp-builder](https://github.com/anthropics/skills/tree/main/skills/@anthropic/mcp-builder) | MCP 服务器生成 | `skillwisp install @anthropic/mcp-builder` |
+| [@anthropic/pdf](skills/@anthropic/pdf) | PDF 处理 | `skillwisp install pdf` |
+| [@anthropic/docx](skills/@anthropic/docx) | Word 文档 | `skillwisp install docx` |
+| [@anthropic/xlsx](skills/@anthropic/xlsx) | Excel | `skillwisp install xlsx` |
+| [@anthropic/mcp-builder](skills/@anthropic/mcp-builder) | MCP 服务器生成 | `skillwisp install mcp-builder` |
+| [@anthropic/frontend-design](skills/@anthropic/frontend-design) | 前端设计 | `skillwisp install frontend-design` |
 
-### Vercel Labs
+### Vercel
 
 | Skill | 描述 | 安装 |
 |-------|------|------|
-| [@vercel/react-best-practices](https://github.com/vercel-labs/agent-skills/tree/main/skills/@vercel/react-best-practices) | React 最佳实践 | `skillwisp install @vercel/react-best-practices` |
-| [@vercel/web-design-guidelines](https://github.com/vercel-labs/agent-skills/tree/main/skills/@vercel/web-design-guidelines) | Web 界面最佳实践 | `skillwisp install @vercel/web-design-guidelines` |
+| [@vercel/react-best-practices](skills/@vercel/react-best-practices) | React 最佳实践 | `skillwisp install react-best-practices` |
+| [@vercel/web-design-guidelines](skills/@vercel/web-design-guidelines) | Web 界面规范 | `skillwisp install web-design-guidelines` |
+| [@vercel/vercel-deploy](skills/@vercel/vercel-deploy) | Vercel 部署 | `skillwisp install vercel-deploy` |
 
 ### OpenAI
 
 | Skill | 描述 | 安装 |
 |-------|------|------|
-| [@openai/figma](https://github.com/openai/skills/tree/main/skills/.curated/@openai/figma) | Figma 设计 | `skillwisp install @openai/figma` |
-| [@openai/playwright](https://github.com/openai/skills/tree/main/skills/.curated/@openai/playwright) | 浏览器自动化 | `skillwisp install @openai/playwright` |
+| [@openai/playwright](skills/@openai/playwright) | 浏览器自动化 | `skillwisp install @openai/playwright` |
+| [@openai/figma](skills/@openai/figma) | Figma 设计 | `skillwisp install @openai/figma` |
+| [@openai/sora](skills/@openai/sora) | AI 视频生成 | `skillwisp install @openai/sora` |
+| [@openai/speech](skills/@openai/speech) | 文本转语音 | `skillwisp install @openai/speech` |
+| [@openai/transcribe](skills/@openai/transcribe) | 音频转写 | `skillwisp install @openai/transcribe` |
+
+### AWS (itsmostafa)
+
+| Skill | 描述 | 安装 |
+|-------|------|------|
+| [@itsmostafa/lambda](skills/@itsmostafa/lambda) | AWS Lambda | `skillwisp install lambda` |
+| [@itsmostafa/s3](skills/@itsmostafa/s3) | AWS S3 | `skillwisp install s3` |
+| [@itsmostafa/dynamodb](skills/@itsmostafa/dynamodb) | AWS DynamoDB | `skillwisp install dynamodb` |
+
+### 其他
+
+| Skill | 描述 | 安装 |
+|-------|------|------|
+| [@obsidian/obsidian-markdown](skills/@obsidian/obsidian-markdown) | Obsidian Markdown | `skillwisp install obsidian-markdown` |
+| [@lackeyjb/playwright-skill](skills/@lackeyjb/playwright-skill) | Playwright 自动化 | `skillwisp install playwright-skill` |
+
 
 ## 支持的工具
 
@@ -79,9 +100,9 @@ skillwisp info @anthropic/pdf    # 查看详情
 
 ## 安装策略
 
-- 主源 `.agent` 存储实际文件
-- 其他 App 通过符号链接指向主源
-- Windows 或 `--no-symlink` 时复制文件
+- 选择 `.agent` (主源) 时，资源存储在 `.agent` 目录，其他 App 通过符号链接指向主源
+- 不选择 `.agent` 时，资源直接复制到每个选中的 App 目录
+- Windows 或 `--no-symlink` 时始终复制文件
 
 ## 退出码
 
@@ -98,7 +119,12 @@ skillwisp info @anthropic/pdf    # 查看详情
 ```
 skillwisp/
 ├── skills/           # Skills 资源
-│   └── @anthropic/   # Anthropic 官方 Skills
+│   ├── @anthropic/   # Anthropic Skills
+│   ├── @vercel/      # Vercel Skills
+│   ├── @openai/      # OpenAI Skills
+│   ├── @obsidian/    # Obsidian Skills
+│   ├── @itsmostafa/  # AWS Skills
+│   └── @lackeyjb/    # Playwright Skill
 ├── docs/
 │   └── skills.md     # Skills 索引
 └── README.md
