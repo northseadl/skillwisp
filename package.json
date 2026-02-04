@@ -28,7 +28,9 @@
     "scripts": {
         "dev": "pnpm --filter @skillwisp/cli dev",
         "build": "pnpm --filter @skillwisp/cli build",
-        "test": "pnpm --filter @skillwisp/cli test"
+        "test": "pnpm --filter @skillwisp/cli test",
+        "stats": "node scripts/sync-stats.js",
+        "sync:stats": "node scripts/sync-stats.js --fix"
     },
     "devDependencies": {
         "typescript": "^5.3.0"

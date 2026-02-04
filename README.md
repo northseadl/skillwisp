@@ -2,7 +2,7 @@
 
 为 Claude Code、Cursor、Gemini 等 AI 编程助手安装 Skills 的命令行工具。
 
-这里是 SkillWisp 的资源仓库，收录了 [Anthropic](https://github.com/anthropics/skills)、[Vercel](https://github.com/vercel-labs/agent-skills)、[OpenAI](https://github.com/openai/skills)、[Obsidian](https://github.com/kepano/obsidian-skills) 等官方及社区的 74 个 Skills。你也可以直接从下方索引手动下载。
+这里是 SkillWisp 的资源仓库，收录了 [Anthropic](https://github.com/anthropics/skills)、[Vercel](https://github.com/vercel-labs/agent-skills)、[OpenAI](https://github.com/openai/skills)、[Obsidian](https://github.com/kepano/obsidian-skills)、[Obra Superpowers](https://github.com/obra/superpowers)、[Context Engineering](https://github.com/muratcankoylan/Agent-Skills-for-Context-Engineering) 等官方及社区的 **102 个 Skills**。你也可以直接从下方索引手动下载。
 
 [![npm version](https://img.shields.io/npm/v/skillwisp.svg)](https://www.npmjs.com/package/skillwisp)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
@@ -38,7 +38,7 @@ skillwisp info @anthropic/pdf    # 查看详情
 
 ## Skills 索引
 
-**[查看全部 74 个 Skills →](docs/skills.md)**
+**[查看全部 102 个 Skills →](docs/skills.md)**
 
 ### Anthropic
 
@@ -118,15 +118,18 @@ skillwisp info @anthropic/pdf    # 查看详情
 
 ```
 skillwisp/
-├── skills/           # Skills 资源
-│   ├── @anthropic/   # Anthropic Skills
-│   ├── @vercel/      # Vercel Skills
-│   ├── @openai/      # OpenAI Skills
-│   ├── @obsidian/    # Obsidian Skills
-│   ├── @itsmostafa/  # AWS Skills
-│   └── @lackeyjb/    # Playwright Skill
+├── skills/               # Skills 资源
+│   ├── @anthropic/       # Anthropic Skills
+│   ├── @vercel/          # Vercel Skills
+│   ├── @openai/          # OpenAI Skills
+│   ├── @obsidian/        # Obsidian Skills
+│   ├── @itsmostafa/      # AWS Skills
+│   ├── @lackeyjb/        # Playwright Skill
+│   ├── @obra/            # Obra Superpowers (开发工作流)
+│   ├── @muratcankoylan/  # Context Engineering (上下文工程)
+│   └── @nextlevelbuilder/# UI/UX Pro Max
 ├── docs/
-│   └── skills.md     # Skills 索引
+│   └── skills.md         # Skills 索引
 └── README.md
 ```
 
