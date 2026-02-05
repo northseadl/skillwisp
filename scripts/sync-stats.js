@@ -35,28 +35,47 @@ function log(msg, color = 'reset') {
 }
 
 /**
- * 递归扫描目录，查找所有 SKILL.md 文件
+ * 仅扫描一级 skill 目录（避免把嵌套的文档/示例误判为 skill）
+ *
+ * 结构约定：
+ *   skills/@source/<skill-id>/SKILL.md
  */
-function findSkillFiles(dir) {
+function scanSkillDirs(skillsDir) {
     const results = [];
+    const broken = [];
 
-    if (!fs.existsSync(dir)) {
-        return results;
+    if (!fs.existsSync(skillsDir)) {
+        return { results, broken };
     }
 
-    const entries = fs.readdirSync(dir, { withFileTypes: true });
+    const sourceEntries = fs.readdirSync(skillsDir, { withFileTypes: true });
+    for (const sourceEntry of sourceEntries) {
+        if (!sourceEntry.isDirectory()) continue;
+        if (!sourceEntry.name.startsWith('@')) continue;
 
-    for (const entry of entries) {
-        const fullPath = path.join(dir, entry.name);
+        const sourceDir = path.join(skillsDir, sourceEntry.name);
+        const skillEntries = fs.readdirSync(sourceDir, { withFileTypes: true });
 
-        if (entry.isDirectory()) {
-            results.push(...findSkillFiles(fullPath));
-        } else if (entry.name === 'SKILL.md') {
-            results.push(fullPath);
+        for (const skillEntry of skillEntries) {
+            if (!skillEntry.isDirectory()) continue;
+
+            const skillDir = path.join(sourceDir, skillEntry.name);
+            const entryPath = path.join(skillDir, 'SKILL.md');
+
+            if (!fs.existsSync(entryPath)) {
+                broken.push({
+                    source: sourceEntry.name.slice(1),
+                    id: skillEntry.name,
+                    dir: skillDir,
+                });
+                continue;
+            }
+
+            results.push(entryPath);
         }
     }
 
-    return results;
+    return { results, broken };
 }
 
 /**
@@ -84,7 +103,7 @@ function parseSkillMetadata(filePath) {
  * 统计各来源的技能数量
  */
 function collectStats() {
-    const skillFiles = findSkillFiles(SKILLS_DIR);
+    const { results: skillFiles, broken } = scanSkillDirs(SKILLS_DIR);
     const statsBySource = {};
 
     for (const filePath of skillFiles) {
@@ -92,23 +111,25 @@ function collectStats() {
         const relativePath = path.relative(SKILLS_DIR, filePath);
         const parts = relativePath.split(path.sep);
 
-        if (parts.length >= 2) {
-            const source = parts[0].replace('@', '');
-            const skillId = parts[1];
+        if (parts.length !== 3) continue;
+        if (!parts[0].startsWith('@')) continue;
+        if (parts[2] !== 'SKILL.md') continue;
 
-            if (!statsBySource[source]) {
-                statsBySource[source] = [];
-            }
+        const source = parts[0].slice(1);
+        const skillId = parts[1];
 
-            statsBySource[source].push({
-                id: skillId,
-                path: filePath,
-                ...parseSkillMetadata(filePath),
-            });
+        if (!statsBySource[source]) {
+            statsBySource[source] = [];
         }
+
+        statsBySource[source].push({
+            id: skillId,
+            path: filePath,
+            ...parseSkillMetadata(filePath),
+        });
     }
 
-    return statsBySource;
+    return { statsBySource, broken };
 }
 
 /**
@@ -209,7 +230,7 @@ function parseTranslations(filePath) {
 }
 
 /**
- * 解析 index.yaml 获取已注册的技能（使用 path 匹配目录）
+ * 解析 index.yaml 获取已注册的技能（提取 id/source/path）
  */
 function parseIndex(filePath) {
     if (!fs.existsSync(filePath)) {
@@ -217,64 +238,118 @@ function parseIndex(filePath) {
     }
 
     const content = fs.readFileSync(filePath, 'utf-8');
-    const skills = {};
+    const lines = content.split('\n');
 
-    // 匹配 path 字段: path: "@source/skill-id"
-    const pathMatches = content.matchAll(/path:\s*["']?@([^\/]+)\/([^"'\n]+)["']?/g);
+    const entries = [];
+    let current = null;
 
-    for (const match of pathMatches) {
-        const source = match[1].trim();
-        const skillId = match[2].trim();
-
-        if (!skills[source]) {
-            skills[source] = [];
+    const unquote = (value) => {
+        let v = String(value).trim();
+        if ((v.startsWith('"') && v.endsWith('"')) || (v.startsWith("'") && v.endsWith("'"))) {
+            v = v.slice(1, -1);
         }
-        skills[source].push(skillId);
+        return v;
+    };
+
+    for (const line of lines) {
+        const idMatch = line.match(/^\s*-\s*id:\s*(.+)\s*$/);
+        if (idMatch) {
+            if (current && current.id && current.source && current.path) {
+                entries.push(current);
+            }
+            current = { id: unquote(idMatch[1]), source: '', path: '' };
+            continue;
+        }
+
+        if (!current) continue;
+
+        const sourceMatch = line.match(/^\s*source:\s*(.+)\s*$/);
+        if (sourceMatch) {
+            current.source = unquote(sourceMatch[1]);
+            continue;
+        }
+
+        const pathMatch = line.match(/^\s*path:\s*(.+)\s*$/);
+        if (pathMatch) {
+            current.path = unquote(pathMatch[1]);
+            continue;
+        }
     }
 
-    return skills;
+    if (current && current.id && current.source && current.path) {
+        entries.push(current);
+    }
+
+    const bySource = {};
+    const byPath = {};
+
+    for (const e of entries) {
+        if (!bySource[e.source]) bySource[e.source] = [];
+        bySource[e.source].push(e);
+        byPath[e.path] = e;
+    }
+
+    return { entries, bySource, byPath };
 }
 
 /**
  * 验证翻译覆盖
  */
-function verifyTranslations(statsBySource, cliRegistryPath) {
+function verifyTranslations(statsBySource, broken, cliRegistryPath) {
     const i18nPath = path.join(cliRegistryPath, 'i18n', 'zh-CN.yaml');
     const indexPath = path.join(cliRegistryPath, 'index.yaml');
 
     const translations = parseTranslations(i18nPath);
-    const indexSkills = parseIndex(indexPath);
+    const index = parseIndex(indexPath);
+    const indexEntries = index.entries || [];
+    const indexBySource = index.bySource || {};
+    const indexByPath = index.byPath || {};
 
     const missing = [];
     const orphaned = [];
 
-    // 检查目录中的技能是否都有翻译
+    // 1) 目录扫描：每个目录应在 index.yaml 有一条 path，并且 translation 以 index.id 为 key
     for (const [source, skills] of Object.entries(statsBySource)) {
         for (const skill of skills) {
-            const hasTranslation = translations[source] && translations[source][skill.id];
-            const inIndex = indexSkills[source] && indexSkills[source].includes(skill.id);
+            const expectedPath = `@${source}/${skill.id}`;
+            const indexEntry = indexByPath[expectedPath];
 
+            if (!indexEntry) {
+                missing.push({ source, id: skill.id, type: 'index', path: expectedPath });
+                continue;
+            }
+
+            const hasTranslation = translations[source] && translations[source][indexEntry.id];
             if (!hasTranslation) {
-                missing.push({ source, id: skill.id, type: 'translation' });
-            }
-            if (!inIndex) {
-                missing.push({ source, id: skill.id, type: 'index' });
+                missing.push({ source, id: indexEntry.id, type: 'translation', path: expectedPath });
             }
         }
     }
 
-    // 检查翻译中是否有孤立条目（目录中不存在）
+    // 2) Index 反向校验：每个 index entry 的 path 对应目录必须存在 SKILL.md
+    for (const entry of indexEntries) {
+        const entryFile = path.join(SKILLS_DIR, entry.path, 'SKILL.md');
+        if (!fs.existsSync(entryFile)) {
+            missing.push({ source: entry.source, id: entry.id, type: 'skillDir', path: entry.path });
+        }
+    }
+
+    // 3) 翻译孤儿：translation 中存在但 index 中没有的 id
     for (const [source, skillIds] of Object.entries(translations)) {
-        for (const skillId of Object.keys(skillIds)) {
-            const existsInDir = statsBySource[source] &&
-                statsBySource[source].some(s => s.id === skillId);
-            if (!existsInDir) {
-                orphaned.push({ source, id: skillId, type: 'translation' });
+        const valid = new Set((indexBySource[source] || []).map((e) => e.id));
+        for (const id of Object.keys(skillIds)) {
+            if (!valid.has(id)) {
+                orphaned.push({ source, id, type: 'translation' });
             }
         }
     }
 
-    return { missing, orphaned, translations, indexSkills };
+    // 4) 结构损坏：存在目录但缺少 SKILL.md（无法计入统计）
+    for (const item of broken || []) {
+        missing.push({ source: item.source, id: item.id, type: 'missingSkillMd' });
+    }
+
+    return { missing, orphaned, translations, indexEntries };
 }
 
 /**
@@ -288,7 +363,7 @@ function main() {
     log('\n📊 SkillWisp Stats Sync\n', 'cyan');
 
     // 收集统计数据
-    const statsBySource = collectStats();
+    const { statsBySource, broken } = collectStats();
     const sources = Object.keys(statsBySource).sort();
     const sourceCount = sources.length;
 
@@ -311,17 +386,14 @@ function main() {
     const cliRegistryPath = path.join(ROOT_DIR, '..', 'skillwisp-cli', 'registry');
 
     if (fs.existsSync(cliRegistryPath)) {
-        const { missing, orphaned, translations, indexSkills } = verifyTranslations(statsBySource, cliRegistryPath);
+        const { missing, orphaned, translations, indexEntries } = verifyTranslations(statsBySource, broken, cliRegistryPath);
 
         // 统计翻译和索引覆盖
         let translationCount = 0;
-        let indexCount = 0;
+        const indexCount = indexEntries.length;
 
         for (const source of Object.keys(translations)) {
             translationCount += Object.keys(translations[source]).length;
-        }
-        for (const source of Object.keys(indexSkills)) {
-            indexCount += indexSkills[source].length;
         }
 
         log('Registry Status:', 'cyan');
@@ -337,12 +409,16 @@ function main() {
                 log('⚠ Missing entries:', 'yellow');
                 const missingIndex = missing.filter(m => m.type === 'index');
                 const missingI18n = missing.filter(m => m.type === 'translation');
+                const missingDir = missing.filter(m => m.type === 'skillDir' || m.type === 'missingSkillMd');
 
                 if (missingIndex.length > 0) {
-                    log(`  index.yaml: ${missingIndex.map(m => `@${m.source}/${m.id}`).join(', ')}`, 'yellow');
+                    log(`  index.yaml: ${missingIndex.map(m => m.path || `@${m.source}/${m.id}`).join(', ')}`, 'yellow');
                 }
                 if (missingI18n.length > 0) {
                     log(`  zh-CN.yaml: ${missingI18n.map(m => `@${m.source}/${m.id}`).join(', ')}`, 'yellow');
+                }
+                if (missingDir.length > 0) {
+                    log(`  skills/: ${missingDir.map(m => m.path ? `${m.path}` : `@${m.source}/${m.id}`).join(', ')}`, 'yellow');
                 }
             }
 
@@ -383,4 +459,3 @@ function main() {
 }
 
 main();
-
