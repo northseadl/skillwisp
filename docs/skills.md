@@ -1,6 +1,6 @@
 # Skills 索引
 
-> 共 102 个 Skills，来自 9 个源
+> 共 73 个 Skills，来自 6 个源
 
 ---
 
@@ -35,7 +35,7 @@
 | [web-design-guidelines](https://github.com/vercel-labs/agent-skills/tree/main/skills/@vercel/web-design-guidelines) | Web 界面最佳实践 | `skillwisp install @vercel/web-design-guidelines` |
 | [react-native-skills](https://github.com/vercel-labs/agent-skills/tree/main/skills/@vercel/react-native-skills) | React Native | `skillwisp install @vercel/react-native-skills` |
 | [composition-patterns](https://github.com/vercel-labs/agent-skills/tree/main/skills/@vercel/composition-patterns) | React 组合模式 | `skillwisp install @vercel/composition-patterns` |
-| [claude.ai](https://github.com/vercel-labs/agent-skills/tree/main/skills/@vercel/claude.ai) | Claude.ai 集成 | `skillwisp install @vercel/claude.ai` |
+
 
 ---
 
@@ -115,58 +115,3 @@
 | Skill | 描述 | 安装 |
 |-------|------|------|
 | [playwright](https://github.com/lackeyjb/playwright-skill) | Playwright 自动化 | `skillwisp install @lackeyjb/playwright` |
-
----
-
-## [Obra Superpowers](https://github.com/obra/superpowers)
-
-完整的软件开发工作流框架，专为编码代理设计。
-
-| Skill | 描述 | 安装 |
-|-------|------|------|
-| [brainstorming](skills/@obra/brainstorming) | 头脑风暴 | `skillwisp install @obra/brainstorming` |
-| [dispatching-parallel-agents](skills/@obra/dispatching-parallel-agents) | 并行代理调度 | `skillwisp install @obra/dispatching-parallel-agents` |
-| [executing-plans](skills/@obra/executing-plans) | 执行计划 | `skillwisp install @obra/executing-plans` |
-| [finishing-a-development-branch](skills/@obra/finishing-a-development-branch) | 完成开发分支 | `skillwisp install @obra/finishing-a-development-branch` |
-| [receiving-code-review](skills/@obra/receiving-code-review) | 接收代码评审 | `skillwisp install @obra/receiving-code-review` |
-| [requesting-code-review](skills/@obra/requesting-code-review) | 请求代码评审 | `skillwisp install @obra/requesting-code-review` |
-| [subagent-driven-development](skills/@obra/subagent-driven-development) | 子代理驱动开发 | `skillwisp install @obra/subagent-driven-development` |
-| [systematic-debugging](skills/@obra/systematic-debugging) | 系统化调试 | `skillwisp install @obra/systematic-debugging` |
-| [test-driven-development](skills/@obra/test-driven-development) | 测试驱动开发 | `skillwisp install @obra/test-driven-development` |
-| [using-git-worktrees](skills/@obra/using-git-worktrees) | Git Worktrees | `skillwisp install @obra/using-git-worktrees` |
-| [using-superpowers](skills/@obra/using-superpowers) | 使用 Superpowers | `skillwisp install @obra/using-superpowers` |
-| [verification-before-completion](skills/@obra/verification-before-completion) | 完成前验证 | `skillwisp install @obra/verification-before-completion` |
-| [writing-plans](skills/@obra/writing-plans) | 编写计划 | `skillwisp install @obra/writing-plans` |
-| [writing-skills](skills/@obra/writing-skills) | 编写技能 | `skillwisp install @obra/writing-skills` |
-
----
-
-## [Context Engineering](https://github.com/muratcankoylan/Agent-Skills-for-Context-Engineering)
-
-AI 代理上下文工程技能集，涵盖多代理架构和生产代理系统。
-
-| Skill | 描述 | 安装 |
-|-------|------|------|
-| [context-fundamentals](skills/@muratcankoylan/context-fundamentals) | 上下文基础 | `skillwisp install @muratcankoylan/context-fundamentals` |
-| [context-degradation](skills/@muratcankoylan/context-degradation) | 上下文退化 | `skillwisp install @muratcankoylan/context-degradation` |
-| [context-compression](skills/@muratcankoylan/context-compression) | 上下文压缩 | `skillwisp install @muratcankoylan/context-compression` |
-| [context-optimization](skills/@muratcankoylan/context-optimization) | 上下文优化 | `skillwisp install @muratcankoylan/context-optimization` |
-| [multi-agent-patterns](skills/@muratcankoylan/multi-agent-patterns) | 多代理模式 | `skillwisp install @muratcankoylan/multi-agent-patterns` |
-| [memory-systems](skills/@muratcankoylan/memory-systems) | 记忆系统 | `skillwisp install @muratcankoylan/memory-systems` |
-| [tool-design](skills/@muratcankoylan/tool-design) | 工具设计 | `skillwisp install @muratcankoylan/tool-design` |
-| [filesystem-context](skills/@muratcankoylan/filesystem-context) | 文件系统上下文 | `skillwisp install @muratcankoylan/filesystem-context` |
-| [hosted-agents](skills/@muratcankoylan/hosted-agents) | 托管代理 | `skillwisp install @muratcankoylan/hosted-agents` |
-| [evaluation](skills/@muratcankoylan/evaluation) | 代理评估 | `skillwisp install @muratcankoylan/evaluation` |
-| [advanced-evaluation](skills/@muratcankoylan/advanced-evaluation) | 高级评估 | `skillwisp install @muratcankoylan/advanced-evaluation` |
-| [project-development](skills/@muratcankoylan/project-development) | 项目开发 | `skillwisp install @muratcankoylan/project-development` |
-| [bdi-mental-states](skills/@muratcankoylan/bdi-mental-states) | BDI 心智状态 | `skillwisp install @muratcankoylan/bdi-mental-states` |
-
----
-
-## [NextLevelBuilder](https://github.com/nextlevelbuilder/ui-ux-pro-max-skill)
-
-AI 驱动的 UI/UX 设计智能。
-
-| Skill | 描述 | 安装 |
-|-------|------|------|
-| [ui-ux-pro-max](skills/@nextlevelbuilder/ui-ux-pro-max) | UI/UX 设计大师 | `skillwisp install @nextlevelbuilder/ui-ux-pro-max` |
